@@ -29,19 +29,23 @@ import gymnasium as gym
 
 # import to register all environments in gym
 # noinspection PyUnresolvedReferences
-import mani_skill2.envs  # pylint: disable=unused-import
+import mani_skill.envs  # pylint: disable=unused-import
 import sapien.core as sapien
-from mani_skill2.envs import sapien_env
+from mani_skill.envs import sapien_env
 
 from sim_web_visualizer import create_sapien_visualizer, bind_visualizer_to_sapien_scene
+from meshcat.servers.zmqserver import start_zmq_server_as_subprocess
 
 
 def wrapped_setup_scene(self: sapien_env.BaseEnv, scene_config: Optional[sapien.SceneConfig] = None):
     if scene_config is None:
         scene_config = self._get_default_scene_config()
+
+    # create a sapien scene
     self._scene = self._engine.create_scene(scene_config)
     self._scene.set_timestep(1.0 / self._sim_freq)
     self._scene = bind_visualizer_to_sapien_scene(self._scene, self._engine, self._renderer)
+    # Ths self.scene will be a maniskill scene, not a sapien scene
 
 
 def wrapped_setup_viewer(self):
@@ -50,11 +54,17 @@ def wrapped_setup_viewer(self):
     self._viewer.toggle_axes(False)
     self._viewer.toggle_camera_lines(False)
 
+import pdb
 
+# pdb.set_trace()
 # Set to True if you want to keep both the original viewer and the web visualizer. A display is needed for True
 keep_on_screen_renderer = False
 
+start_zmq_server_as_subprocess()  # strange??
+
 create_sapien_visualizer(port=6000, host="localhost", keep_default_viewer=keep_on_screen_renderer)
+
+print('create_sapien_visualizer done')
 sapien_env.BaseEnv._setup_scene = wrapped_setup_scene
 
 sapien_env.BaseEnv._setup_viewer = wrapped_setup_viewer
@@ -67,7 +77,7 @@ task_names = [
     "PandaAvoidObstacles-v0",
     "AssemblingKits-v0",
     "PlugCharger-v0",
-    "PegInsertionSide-v0",
+    "PegInsertionSide-v1",
     "PickClutterYCB-v0",
     "PickSingleEGAD-v0",
     "StackCube-v0",

@@ -14,7 +14,7 @@ from meshcat import geometry as g
 from sim_web_visualizer.parser.mesh_parser import get_trimesh_geometry_material, AssetResource
 from sim_web_visualizer.parser.mjcf import load_mjcf_with_dmc
 from sim_web_visualizer.parser.urdf import load_urdf_with_yourdfpy
-
+import pdb
 
 def rgb_to_hex(rgb):
     rgb = (rgb * 255).astype(np.uint8)
@@ -23,6 +23,7 @@ def rgb_to_hex(rgb):
 
 class MeshCatVisualizerBase:
     def __init__(self, port: Optional[int] = None, host="localhost", continuous_scene=False):
+        # pdb.set_trace()
         if port is not None:
             zmq_url = f"tcp://{host}:{port}"
         else:
